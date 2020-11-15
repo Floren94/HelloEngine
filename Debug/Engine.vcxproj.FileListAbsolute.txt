@@ -1,0 +1,10 @@
+C:\Users\Carlos\Desktop\Engine\Debug\EngineMaster.exe
+C:\Users\Carlos\Desktop\Engine\Debug\EngineMaster.pdb
+C:\Users\magri\Desktop\Engine\Debug\EngineMaster.exe
+C:\Users\magri\Desktop\Engine\Debug\EngineMaster.pdb
+C:\Users\magri\Desktop\EngineDraw\Debug\EngineMaster.exe
+C:\Users\magri\Desktop\EngineDraw\Debug\EngineMaster.pdb
+E:\Master\EngineDraw\Debug\EngineMaster.exe
+E:\Master\EngineDraw\Debug\EngineMaster.pdb
+E:\Master\HelloEngine\Debug\EngineMaster.exe
+E:\Master\HelloEngine\Debug\EngineMaster.pdb
