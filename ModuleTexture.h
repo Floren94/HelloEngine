@@ -12,8 +12,5 @@ class ModuleTexture : public Module
 	bool Init();
 	update_status Update();
 	bool CleanUp();
-	unsigned getTexture() { return texid; }
 	
-private:
-	ILuint texid;
 };

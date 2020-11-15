@@ -17,9 +17,44 @@ ModuleTexture::~ModuleTexture()
 // Called before render is available
 bool ModuleTexture::Init()
 {
+	ilInit(); /* Initialization of DevIL */
+	iluInit();
+
+	ilEnable(IL_ORIGIN_SET);
+	ilOriginFunc(IL_ORIGIN_LOWER_LEFT);
+
+	ILuint texid;
+
+	ilGenImages(1, &texid); /* Generation of one image name */
+	ilBindImage(texid); /* Binding of image name */
+
+	ILboolean success;
+	success = ilLoadImage("Textures/Lenna.png"); /* Loading of image "image.jpg" */
+	if (success) /* If no error occured: */
+	{
+		success = ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE); /* Convert every colour component into
+		  unsigned byte. If your image contains alpha channel you can replace IL_RGB with IL_RGBA */
+		if (!success)
+		{
+			/* Error occured */
+			SDL_Quit();
+			return -1;
+		}
+		glGenTextures(1, &texid); /* Texture name generation */
+		glBindTexture(GL_TEXTURE_2D, texid); /* Binding of texture name */
+
+		glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_BPP), ilGetInteger(IL_IMAGE_WIDTH),
+			ilGetInteger(IL_IMAGE_HEIGHT), 0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE,
+			ilGetData()); /* Texture specification */
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); /* We will use linear
+		  interpolation for magnification filter */
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); /* We will use linear
+		  interpolation for minifying filter */
+		ilDeleteImage(texid);
+	}
 	return true;
 }
-
 
 // Called every draw update
 update_status ModuleTexture::Update()
