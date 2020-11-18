@@ -11,7 +11,6 @@ class ModuleTextures;
 class ModuleInput;
 class ModuleCamera;
 class ModuleProgram;
-class ModuleRenderExercise;
 class ModuleDebugDraw;
 class ModuleTexture;
 

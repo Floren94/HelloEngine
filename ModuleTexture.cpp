@@ -20,9 +20,6 @@ bool ModuleTexture::Init()
 	ilInit(); /* Initialization of DevIL */
 	iluInit();
 
-	ilEnable(IL_ORIGIN_SET);
-	ilOriginFunc(IL_ORIGIN_LOWER_LEFT);
-
 	ILuint texid;
 
 	ilGenImages(1, &texid); /* Generation of one image name */
@@ -40,16 +37,16 @@ bool ModuleTexture::Init()
 			SDL_Quit();
 			return -1;
 		}
-		glGenTextures(1, &texid); /* Texture name generation */
-		glBindTexture(GL_TEXTURE_2D, texid); /* Binding of texture name */
+		glGenTextures(1, &textureID); /* Texture name generation */
+		glBindTexture(GL_TEXTURE_2D, textureID); /* Binding of texture name */
 
 		glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_BPP), ilGetInteger(IL_IMAGE_WIDTH),
 			ilGetInteger(IL_IMAGE_HEIGHT), 0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE,
 			ilGetData()); /* Texture specification */
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); /* We will use linear
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); /* We will use linear
 		  interpolation for magnification filter */
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); /* We will use linear
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); /* We will use linear
 		  interpolation for minifying filter */
 		ilDeleteImage(texid);
 	}

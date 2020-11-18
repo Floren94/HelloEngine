@@ -24,8 +24,11 @@ public:
 	void RotateY(double degree);
 	void Zoom(double dir);
 
+	float4x4 getProjection() { return projectionGL; }
+	float4x4 getView() { return viewMatrix; }
+
+	float4x4 projectionGL, viewMatrix;
 private:
-	Frustum frustum;
 	int lastYmouse = 0;
 	int lastXmouse = 0;
 	double deltaTime;
@@ -33,4 +36,5 @@ private:
 	const double SPEED = 0.01f;
 	bool drag = false;
 	const float DEGTORAD = (3.1216f / 180);
+	Frustum frustum;
 };

@@ -29,8 +29,8 @@ bool ModuleCamera::Init()
 	frustum.SetViewPlaneDistances(0.1f, 200.0f);
 	frustum.SetHorizontalFovAndAspectRatio(DEGTORAD * 90.0f, 1.3f);
 
-	frustum.SetPos(float3(0, 1, -2));
-	frustum.SetFront(float3::unitZ);
+	frustum.SetPos(float3(0, 0, 2));
+	frustum.SetFront(-float3::unitZ);
 	frustum.SetUp(float3::unitY);
 
 	float4x4 projectionGL = frustum.ProjectionMatrix().Transposed(); //<-- Important to transpose!
@@ -67,6 +67,14 @@ update_status ModuleCamera::PreUpdate()
 // Called every draw update
 update_status ModuleCamera::Update()
 {
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadMatrixf(*(frustum.ProjectionMatrix().Transposed().v));
+
+	projectionGL = frustum.ProjectionMatrix(); 
+
+	viewMatrix = frustum.ViewMatrix();
+
 	if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT) {
 		int* mouseY = new int(1); 
 		int* mouseX = new int(1);
@@ -156,12 +164,11 @@ update_status ModuleCamera::Update()
 	float4x4 view = frustum.ViewMatrix();
 	view.Transpose();
 
-	
+	int w, h;
 
-	App->debugdraw->Draw(view, frustum.ProjectionMatrix().Transposed(), App->window->screen_surface->w, App->window->screen_surface->h);
+	SDL_GetWindowSize(App->window->window, &w, &h);
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixf(*(frustum.ProjectionMatrix().Transposed().v));
+	App->debugdraw->Draw(frustum.ViewMatrix(), frustum.ProjectionMatrix(), w, h);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(*view.v);
