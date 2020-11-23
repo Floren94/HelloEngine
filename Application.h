@@ -5,14 +5,16 @@
 #include "Module.h"
 
 class ModuleRender;
-class ModuleRenderExercise;
 class ModuleWindow;
 class ModuleTextures;
 class ModuleInput;
 class ModuleCamera;
+class ModuleEditor;
+class ModuleRenderExercise;
 class ModuleProgram;
-class ModuleDebugDraw;
 class ModuleTexture;
+class ModuleDebugDraw;
+class ModuleModel;
 
 class Application
 {
@@ -27,13 +29,16 @@ public:
 
 public:
 	ModuleRender* renderer = nullptr;
-	ModuleRenderExercise* rendererExercise = nullptr;
 	ModuleWindow* window = nullptr;
 	ModuleInput* input = nullptr;
 	ModuleCamera* camera = nullptr;
+	ModuleEditor* editor = nullptr;
+	ModuleRenderExercise* rendererExercise = nullptr;
 	ModuleProgram* program = nullptr;
-	ModuleDebugDraw* debugdraw = nullptr;
 	ModuleTexture* texture = nullptr;
+	ModuleDebugDraw* debugdraw = nullptr;
+	ModuleModel* model = nullptr;
+
 private:
 
 	std::list<Module*> modules;

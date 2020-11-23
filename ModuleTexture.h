@@ -7,11 +7,14 @@
 class ModuleTexture : public Module
 {
 public:
-	ModuleTexture();
-	~ModuleTexture();
+	ModuleTexture() {};
+	~ModuleTexture() {};
 
 	bool Init();
 	update_status Update();
 	bool CleanUp();
-	unsigned textureID;
+
+	unsigned LoadTexture(const char* file_name);
+	void FreeTexture(unsigned textID);
+
 };

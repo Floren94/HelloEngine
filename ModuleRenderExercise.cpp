@@ -6,12 +6,15 @@
 #include "ModuleCamera.h"
 #include "ModuleInput.h"
 #include "ModuleDebugDraw.h"
+#include "ModuleEditor.h"
+#include "ModuleModel.h"
 #include "SDL.h"
 #include "SDL_opengl.h"
 #include "SDL_main.h"
 #include "GL/glew.h"
 #include "il.h"
 #include "ilu.h"
+#include "assimp/cimport.h"
 
 ModuleRenderExercise::ModuleRenderExercise()
 {
@@ -20,7 +23,6 @@ ModuleRenderExercise::ModuleRenderExercise()
 // Destructor
 ModuleRenderExercise::~ModuleRenderExercise()
 {
-	App->program->DestroyVBO(triangle);
 }
 
 // Called before RenderExercise is available
@@ -36,7 +38,7 @@ bool ModuleRenderExercise::Init()
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24); // we want to have a depth buffer with 24 bits
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8); // we want to have a stencil buffer with 8 bits
 
-	SDL_GL_CreateContext(App->window->window);
+	context = SDL_GL_CreateContext(App->window->window);
 
 	GLenum err = glewInit();
 
@@ -44,13 +46,10 @@ bool ModuleRenderExercise::Init()
 	glEnable(GL_CULL_FACE); // Enable cull backward faces
 	glFrontFace(GL_CCW); // Front faces will be counter clockwise
 
-	triangle = App->program->CreateTriangleVBO();
-
-	unsigned int vertex_id = App->program->CompileShader(GL_VERTEX_SHADER, App->program->LoadShaderSource("Shaders/Vertex.vert"));
-	unsigned int fragment_id = App->program->CompileShader(GL_FRAGMENT_SHADER, App->program->LoadShaderSource("Shaders/Fragment.frag"));
-
-	program = App->program->CreateProgram(vertex_id, fragment_id);
-
+	return true;
+}
+bool ModuleRenderExercise::Start() {
+	App->model->Load("BakerHouse.fbx");
 	return true;
 }
 
@@ -72,12 +71,20 @@ update_status ModuleRenderExercise::PreUpdate()
 // Called every draw update
 update_status ModuleRenderExercise::Update()
 {
-	App->program->RenderVBO(triangle, program);
+	int w, h;
+
+	SDL_GetWindowSize(App->window->window, &w, &h);
+
+	App->debugdraw->Draw(App->camera->GetView() , App->camera->GetProjection(), w, h);
+
+	App->model->Draw();
 	return UPDATE_CONTINUE;
 }
 
 update_status ModuleRenderExercise::PostUpdate()
 {
+	App->editor->RenderUi();
+
 	SDL_GL_SwapWindow(App->window->window);
 	return UPDATE_CONTINUE;
 }
@@ -86,5 +93,6 @@ update_status ModuleRenderExercise::PostUpdate()
 bool ModuleRenderExercise::CleanUp()
 {
 	LOG("Destroying RenderExercise");
+	SDL_GL_DeleteContext(context);
 	return true;
 }

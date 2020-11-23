@@ -29,8 +29,8 @@ bool ModuleCamera::Init()
 	frustum.SetViewPlaneDistances(0.1f, 200.0f);
 	frustum.SetHorizontalFovAndAspectRatio(DEGTORAD * 90.0f, 1.3f);
 
-	frustum.SetPos(float3(0, 0, 2));
-	frustum.SetFront(-float3::unitZ);
+	frustum.SetPos(float3(0, 2, -12));
+	frustum.SetFront(float3::unitZ);
 	frustum.SetUp(float3::unitY);
 
 	float4x4 projectionGL = frustum.ProjectionMatrix().Transposed(); //<-- Important to transpose!
@@ -38,19 +38,13 @@ bool ModuleCamera::Init()
 	float4x4 view = frustum.ViewMatrix();
 	view.Transpose();
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixf(*(frustum.ProjectionMatrix().Transposed().v));
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(*view.v);
-
 	return true;
 }
 
 update_status ModuleCamera::PreUpdate()
 {
 
-	if (drag) {
+	if (startDelta) {
 		last = now;
 		now = SDL_GetPerformanceCounter();
 		deltaTime = (double)((now - last) * 1000 / (double)SDL_GetPerformanceFrequency());
@@ -67,6 +61,7 @@ update_status ModuleCamera::PreUpdate()
 // Called every draw update
 update_status ModuleCamera::Update()
 {
+	double speed = SPEED;
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadMatrixf(*(frustum.ProjectionMatrix().Transposed().v));
@@ -75,27 +70,31 @@ update_status ModuleCamera::Update()
 
 	viewMatrix = frustum.ViewMatrix();
 
+	if (App->input->GetKey(SDL_SCANCODE_LSHIFT)) {
+		speed *= 2.0f;
+	}
+
 	if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT) {
 		int* mouseY = new int(1); 
 		int* mouseX = new int(1);
 		SDL_GetMouseState(NULL, mouseY);
 		SDL_GetMouseState(mouseX, NULL);
 
-		if (mouseY[0] > lastYmouse + 5) {
-			VerticalMove(SPEED);
+		if (mouseY[0] > lastYmouse ) {
+			VerticalMove(speed / 2);
 			lastYmouse = mouseY[0];
 		}
-		else if (mouseY[0] < lastYmouse - 5) {
-			VerticalMove(-SPEED);
+		else if (mouseY[0] < lastYmouse ) {
+			VerticalMove(-speed / 2);
 			lastYmouse = mouseY[0];
 		}
 		
-		if (mouseX[0] > lastXmouse + 5) {
-			SideMove(SPEED);
+		if (mouseX[0] > lastXmouse ) {
+			SideMove(speed/2);
 			lastXmouse = mouseX[0];
 		}
-		else if (mouseX[0] < lastXmouse - 5) {
-			SideMove(-SPEED);
+		else if (mouseX[0] < lastXmouse ) {
+			SideMove(-speed / 2);
 			lastXmouse = mouseX[0];
 		}
 		delete mouseY;
@@ -108,12 +107,12 @@ update_status ModuleCamera::Update()
 		int* mouseY = new int(1);
 		SDL_GetMouseState(NULL, mouseY);
 
-		if (mouseY[0] > lastYmouse + 5) {
-			Zoom(SPEED);
+		if (mouseY[0] > lastYmouse + 1) {
+			Zoom(speed);
 			lastYmouse = mouseY[0];
 		}
-		else if (mouseY[0] < lastYmouse - 5) {
-			Zoom(-SPEED);
+		else if (mouseY[0] < lastYmouse - 1) {
+			Zoom(-speed);
 			lastYmouse = mouseY[0];
 		}
 		delete mouseY;
@@ -121,27 +120,27 @@ update_status ModuleCamera::Update()
 	}
 	else if (App->input->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT &&
 		(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT)) {
-		VerticalMove(SPEED);
+		VerticalMove(speed);
 	}
 	else if (App->input->GetKey(SDL_SCANCODE_E) == KEY_REPEAT &&
 		(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT)) {
-		VerticalMove(-SPEED);
+		VerticalMove(-speed);
 	}
 	else if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT &&
 		(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT)) {
-		Move(SPEED);
+		Move(speed);
 	}
 	else if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT &&
 		(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT)) {
-		Move(-SPEED);
+		Move(-speed);
 	}
 	else if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT &&
 		(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT)) {
-		SideMove(SPEED);
+		SideMove(speed);
 	}
 	else if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT &&
 		(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT)) {
-		SideMove(-SPEED);
+		SideMove(-speed);
 	}
 	else if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT &&
 		(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT)) {
@@ -159,16 +158,10 @@ update_status ModuleCamera::Update()
 		(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT)) {
 		RotateY(DEG);
 	}
-	else drag = false;
+	else startDelta = false;
 
 	float4x4 view = frustum.ViewMatrix();
 	view.Transpose();
-
-	int w, h;
-
-	SDL_GetWindowSize(App->window->window, &w, &h);
-
-	App->debugdraw->Draw(frustum.ViewMatrix(), frustum.ProjectionMatrix(), w, h);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(*view.v);
@@ -191,7 +184,7 @@ bool ModuleCamera::CleanUp()
 
 void ModuleCamera::VerticalMove(double dir) {
 
-	drag = true;
+	startDelta = true;
 	float3 newP = frustum.Pos();
 	newP.y += dir;
 	frustum.SetPos(newP);
@@ -201,7 +194,7 @@ void ModuleCamera::VerticalMove(double dir) {
 
 void ModuleCamera::Move(double dir) {
 
-	drag = true;
+	startDelta = true;
 	vec front = frustum.Front();
 	vec pos = frustum.Pos();
 	float farDist = frustum.FarPlaneDistance();
@@ -218,7 +211,7 @@ void ModuleCamera::Move(double dir) {
 }
 
 void ModuleCamera::SideMove(double dir) {
-	drag = true;
+	startDelta = true;
 	vec up = frustum.Up();
 	vec front = frustum.Front();
 	vec pos = frustum.Pos();
@@ -240,27 +233,27 @@ void ModuleCamera::SideMove(double dir) {
 
 void ModuleCamera::RotateX(double degrees) {
 
-	float3x3 rotationMatrix = float3x3::RotateX(degrees * DEGTORAD);
+	float3x3 rotationMatrix = frustum.WorldMatrix().RotatePart().RotateX(degrees * DEGTORAD);
 	vec oldFront = frustum.Front().Normalized();
-	frustum.SetFront(rotationMatrix * oldFront);
+	frustum.SetFront(rotationMatrix.MulDir(oldFront));
 	vec oldUp = frustum.Up().Normalized();
-	frustum.SetUp(rotationMatrix * oldUp);
+	frustum.SetUp(rotationMatrix.MulDir(oldUp));
 
 }
 
 void ModuleCamera::RotateY(double degrees) {
 
-	float3x3 rotationMatrix = float3x3::RotateY(degrees * DEGTORAD);
+	float3x3 rotationMatrix = frustum.WorldMatrix().RotatePart().RotateY(degrees * DEGTORAD);
 	vec oldFront = frustum.Front().Normalized();
-	frustum.SetFront(rotationMatrix * oldFront);
+	frustum.SetFront(rotationMatrix.MulDir(oldFront));
 	vec oldUp = frustum.Up().Normalized();
-	frustum.SetUp(rotationMatrix * oldUp);
+	frustum.SetUp(rotationMatrix.MulDir(oldUp));
 
 }
 
 void ModuleCamera::Zoom(double dir) {
 
-	drag = true;
+	startDelta = true;
 	vec front = frustum.Front();
 	vec pos = frustum.Pos();
 	float farDist = frustum.FarPlaneDistance();

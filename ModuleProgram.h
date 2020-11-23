@@ -18,16 +18,19 @@ public:
 	ModuleProgram();
 	~ModuleProgram();
 
+	bool Init();
 	bool CleanUp();
 
-	unsigned CreateTriangleVBO();
+	//unsigned CreateTriangleVBO();
 	unsigned CompileShader(unsigned type, const char* source);
 	unsigned CreateProgram(unsigned vtx_shader, unsigned frg_shader);
 	char* LoadShaderSource(const char* shader_file_name);
-	void RenderVBO(unsigned vbo, unsigned program);
-	void DestroyVBO(unsigned vbo);
+	//void RenderVBO(unsigned vbo, unsigned program);
+	//void DestroyVBO(unsigned vbo);
+
+	unsigned int GetProgram() { return program; }
 
 private:
-	void* context;
+	unsigned program, vertex_id, fragment_id;
 };
 
