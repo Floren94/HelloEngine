@@ -1,5 +1,0 @@
-﻿  ModuleInput.cpp
-E:\Master\HelloEngine\glew-2.1.0\include\GL\glew.h(9299,1): warning C4005: 'GL_WRITE_ONLY': macro redefinition
-E:\Master\HelloEngine\glew-2.1.0\include\GL\glew.h(1663): message : see previous definition of 'GL_WRITE_ONLY'
-E:\Master\HelloEngine\ModuleInput.cpp(106,44): warning C4244: 'argument': conversion from 'Sint32' to 'float', possible loss of data
-  Engine.vcxproj -> E:\Master\HelloEngine\Debug\EngineMaster.exe
