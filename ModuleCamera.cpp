@@ -1,6 +1,7 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ModuleCamera.h"
+#include "ModuleEditor.h"
 #include "ModuleWindow.h"
 #include "ModuleInput.h"
 #include "ModuleDebugDraw.h"
@@ -61,10 +62,15 @@ update_status ModuleCamera::PreUpdate()
 // Called every draw update
 update_status ModuleCamera::Update()
 {
+
 	double speed = SPEED;
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadMatrixf(*(frustum.ProjectionMatrix().Transposed().v));
+
+	if (App->editor->isFocused) {
+		return UPDATE_CONTINUE;
+	}
 
 	projectionGL = frustum.ProjectionMatrix(); 
 
@@ -144,19 +150,46 @@ update_status ModuleCamera::Update()
 	}
 	else if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT &&
 		(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT)) {
-		RotateX(-DEG);
+		RotateX(speed / 6);
 	}
 	else if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT &&
 		(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT)) {
-		RotateX(DEG);
+		RotateX(-speed / 6);
 	}
 	else if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT &&
 		(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT)) {
-		RotateY(-DEG);
+		RotateY(-speed * 6);
 	}
 	else if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT &&
 		(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT)) {
-		RotateY(DEG);
+		RotateY(speed * 6);
+	}else if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT) {
+		int* mouseY = new int(1);
+		int* mouseX = new int(1);
+		SDL_GetMouseState(NULL, mouseY);
+		SDL_GetMouseState(mouseX, NULL);
+
+		if (mouseY[0] > lastYmouse) {
+			RotateX(speed / 10);
+			lastYmouse = mouseY[0];
+		}
+		else if (mouseY[0] < lastYmouse) {
+			RotateX(-speed / 10);
+			lastYmouse = mouseY[0];
+		}
+
+		if (mouseX[0] > lastXmouse) {
+			RotateY(speed * 4);
+			lastXmouse = mouseX[0];
+		}
+		else if (mouseX[0] < lastXmouse) {
+			RotateY(-speed * 4);
+			lastXmouse = mouseX[0];
+		}
+		delete mouseY;
+		delete mouseX;
+		mouseY = nullptr;
+		mouseX = nullptr;
 	}
 	else startDelta = false;
 
@@ -233,12 +266,11 @@ void ModuleCamera::SideMove(double dir) {
 
 void ModuleCamera::RotateX(double degrees) {
 
-	float3x3 rotationMatrix = frustum.WorldMatrix().RotatePart().RotateX(degrees * DEGTORAD);
-	vec oldFront = frustum.Front().Normalized();
-	frustum.SetFront(rotationMatrix.MulDir(oldFront));
-	vec oldUp = frustum.Up().Normalized();
-	frustum.SetUp(rotationMatrix.MulDir(oldUp));
+	vec oldFront = (frustum.Front() * cos(degrees) + frustum.Up() * sin(degrees)).Normalized();
+	frustum.SetFront(oldFront);
 
+	vec oldUp = frustum.WorldRight().Cross(oldFront);
+	frustum.SetUp(oldUp);
 }
 
 void ModuleCamera::RotateY(double degrees) {
@@ -267,4 +299,8 @@ void ModuleCamera::Zoom(double dir) {
 
 	frustum.SetFront(newP);
 
+}
+
+void ModuleCamera::SetFOV(float aspectRadio) {
+	frustum.SetHorizontalFovAndAspectRatio(frustum.HorizontalFov(), aspectRadio);
 }

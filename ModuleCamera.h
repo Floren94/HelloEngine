@@ -23,9 +23,13 @@ public:
 	void RotateX(double degree);
 	void RotateY(double degree);
 	void Zoom(double dir);
+	void SetFOV(float aspectRat);
 
 	float4x4 GetProjection() { return projectionGL; }
 	float4x4 GetView() { return viewMatrix; }
+	float3 GetPosition() { return frustum.Pos(); }
+	float3 GetUp() { return frustum.Up(); }
+	float3 GetFront() { return frustum.Front(); }
 
 private:
 	int lastYmouse = 0;

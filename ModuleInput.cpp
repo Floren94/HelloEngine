@@ -1,7 +1,7 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ModuleInput.h"
-#include "ModuleRender.h"
+#include "ModuleCamera.h"
 #include "SDL/include/SDL.h"
 
 #define MAX_KEYS 300
@@ -101,6 +101,9 @@ update_status ModuleInput::PreUpdate()
 			case SDL_WINDOWEVENT_MAXIMIZED:
 			case SDL_WINDOWEVENT_RESTORED:
 				windowEvents[WE_SHOW] = true;
+				break;
+			case SDL_WINDOWEVENT_RESIZED:
+				App->camera->SetFOV(event.window.data1 / event.window.data2);
 				break;
 			}
 			break;

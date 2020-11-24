@@ -20,7 +20,13 @@ public:
 	void Draw();
 
 	int GetVertices();
+	int GetVertices(int mesh) { return scene->mMeshes[mesh]->mNumVertices; }
 	int GetTriangles();
+	int GetMeshes() { return scene->mNumMeshes; }
+	int GetFaces(int mesh) { return scene->mMeshes[mesh]->mNumFaces; }
+	int GetTextureWidth() { return App->texture->GetWidth(); }
+	int GetTextureHeight() { return App->texture->GetHeight(); }
+	unsigned GetMaterial(int material) { return material_vec[material]; }
 
 private:
 	void LoadMaterials();

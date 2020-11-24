@@ -25,6 +25,10 @@ ModuleRenderExercise::~ModuleRenderExercise()
 {
 }
 
+void myCallback(const char* msg, char* userData) {
+	App->editor->AddLog(msg);
+}
+
 // Called before RenderExercise is available
 bool ModuleRenderExercise::Init()
 {
@@ -45,6 +49,10 @@ bool ModuleRenderExercise::Init()
 	glEnable(GL_DEPTH_TEST); // Enable depth test
 	glEnable(GL_CULL_FACE); // Enable cull backward faces
 	glFrontFace(GL_CCW); // Front faces will be counter clockwise
+
+	struct aiLogStream stream;
+	stream.callback = myCallback;
+	aiAttachLogStream(&stream);
 
 	return true;
 }
