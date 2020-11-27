@@ -18,6 +18,7 @@ ModuleModel::~ModuleModel()
 // Called before render is available
 bool ModuleModel::Init()
 {
+	centerP = { 0,0,0 };
 	return true;
 }
 
@@ -55,6 +56,7 @@ void ModuleModel::Load(const char* file_name) {
 
 void ModuleModel::LoadMaterials() {
 	aiString file;
+
 	//material_vec.reserve(scene->mNumMaterials);
 	for (unsigned i = 0; i < scene->mNumMaterials; ++i)
 	{
@@ -76,6 +78,16 @@ void ModuleModel::LoadMeshes() {
 		new_mesh.LoadEBO(my_Mesh);
 		new_mesh.CreateVAO();
 		mesh_vec.push_back(new_mesh);
+
+		if (i == 0){
+			centerP = new_mesh.GetCenter();
+		}else{
+			centerP = (centerP + new_mesh.GetCenter());
+			centerP = { centerP.x / 2,centerP.y / 2 ,centerP.z / 2 };
+		}
+
+		double modelOutZ = new_mesh.GetOuterZ();
+		if (modelOutZ > outerZ) outerZ = modelOutZ;
 	}
 }
 

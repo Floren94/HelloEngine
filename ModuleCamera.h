@@ -12,6 +12,7 @@ public:
 	~ModuleCamera();
 
 	bool Init();
+	bool Start() { SetPos(); return true; }
 	update_status PreUpdate();
 	update_status Update();
 	update_status PostUpdate();
@@ -23,7 +24,8 @@ public:
 	void RotateX(double degree);
 	void RotateY(double degree);
 	void Zoom(double dir);
-	void SetFOV(float aspectRat);
+	void SetFOV();
+	void SetPos();
 
 	float4x4 GetProjection() { return projectionGL; }
 	float4x4 GetView() { return viewMatrix; }
@@ -34,10 +36,11 @@ public:
 private:
 	int lastYmouse = 0;
 	int lastXmouse = 0;
+	double aspectRatio;
 	double deltaTime;
 	bool startDelta = false;
 	const double DEG = 0.5f;
-	const double SPEED = 0.05f;
+	const double SPEED = 0.1f;
 	const float DEGTORAD = (math::pi / 180);
 	Frustum frustum;
 	float4x4 projectionGL, viewMatrix;

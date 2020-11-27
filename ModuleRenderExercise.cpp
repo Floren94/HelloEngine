@@ -15,6 +15,8 @@
 #include "il.h"
 #include "ilu.h"
 #include "assimp/cimport.h"
+#include "src/Math/float4x4.h"
+#include "src/Math/float3x3.h"
 
 ModuleRenderExercise::ModuleRenderExercise()
 {
@@ -103,4 +105,23 @@ bool ModuleRenderExercise::CleanUp()
 	LOG("Destroying RenderExercise");
 	SDL_GL_DeleteContext(context);
 	return true;
+}
+
+void ModuleRenderExercise::LoadDropModel(char* filename) {
+	std::string s = (std::string)filename;
+
+	size_t i = s.rfind('.', s.length());
+
+	s = s.substr(i + 1, s.length() - i);
+	
+	std::transform(s.begin(), s.end(), s.begin(), ::tolower);
+
+	if (s == "fbx") {
+		App->model->CleanUp();
+		App->model->Load(filename);
+		SDL_free(filename);
+	}
+	else {
+		LOG("%s not FBX file", s);
+	}
 }

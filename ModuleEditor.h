@@ -4,6 +4,7 @@
 #include "imgui.h"
 #include "imgui_impl_opengl3.h"
 #include "imgui_impl_sdl.h"
+#include "Timer.h"
 #include <vector>
 
 class ModuleEditor : public Module
@@ -34,5 +35,6 @@ private :
 	bool properties = true;
 	int w = 0, h = 0;
 
+	Timer timer;
 };
 

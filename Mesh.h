@@ -7,6 +7,7 @@
 #include <iostream>
 #include "src/Math/float2.h"
 #include "src/Math/float4x4.h"
+#include "src/Math/float3x3.h"
 
 class Mesh 
 {
@@ -20,13 +21,21 @@ public :
 	void Draw(const std::vector<unsigned>& model_textures);
 	void DeleteBuff();
 
+	vec	 GetCenter();
+	double GetOuterZ() { return maxZ; };
+
 private :
 	unsigned int vbo = 0, ebo = 0, vao = 0;
 	int materialID = 0, nIndices = 0;
+	double minX, maxX, minY, maxY, minZ, maxZ;
+	vec centerP;
 };
 
 inline 
 void Mesh::LoadVBO(const aiMesh* mesh) {
+	minX = maxX = minY = maxY = minZ = maxZ = 0;
+	centerP = { 0,0,0 };
+
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	unsigned vertex_size = (sizeof(float) * 3) + (sizeof(float) * 2);
@@ -42,6 +51,13 @@ void Mesh::LoadVBO(const aiMesh* mesh) {
 		*(vertices++) = mesh->mVertices[i].z;
 		*(vertices++) = mesh->mTextureCoords[0][i].x;
 		*(vertices++) = mesh->mTextureCoords[0][i].y;
+
+		if (mesh->mVertices[i].x > maxX) maxX = mesh->mVertices[i].x;
+		if (mesh->mVertices[i].x < minX) minX = mesh->mVertices[i].x;
+		if (mesh->mVertices[i].y > maxY) maxY = mesh->mVertices[i].y;
+		if (mesh->mVertices[i].y < minY) minY = mesh->mVertices[i].y;
+		if (mesh->mVertices[i].z > maxZ) maxZ = mesh->mVertices[i].z;
+		if (mesh->mVertices[i].z < minZ) minZ = mesh->mVertices[i].z;
 	}
 
 	glUnmapBuffer(GL_ARRAY_BUFFER);
@@ -59,7 +75,7 @@ void Mesh::LoadEBO(const aiMesh* mesh) {
 
 	for (unsigned i = 0; i < mesh->mNumFaces; ++i)
 	{
-		assert(mesh->mFaces[i].mNumIndices == 3); // note: assume triangles = 3 indices per face
+		assert(mesh->mFaces[i].mNumIndices == 3); 
 		*(indices++) = mesh->mFaces[i].mIndices[0];
 		*(indices++) = mesh->mFaces[i].mIndices[1];
 		*(indices++) = mesh->mFaces[i].mIndices[2];
@@ -105,4 +121,18 @@ inline
 void Mesh::DeleteBuff() {
 	glDeleteBuffers(1, &vbo);
 	glDeleteBuffers(1, &ebo);
+}
+
+inline
+vec Mesh::GetCenter() {
+
+	float midX, midY, midZ;
+
+	midX = (maxX + minX) / 2;
+	midY = (maxY + minY) / 2;
+	midZ = (maxZ + minZ) / 2;
+
+	centerP = { midX, midY, midZ };
+
+	return centerP;
 }

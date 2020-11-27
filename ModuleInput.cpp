@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModuleInput.h"
 #include "ModuleCamera.h"
+#include "ModuleRenderExercise.h"
 #include "SDL/include/SDL.h"
 
 #define MAX_KEYS 300
@@ -103,7 +104,7 @@ update_status ModuleInput::PreUpdate()
 				windowEvents[WE_SHOW] = true;
 				break;
 			case SDL_WINDOWEVENT_RESIZED:
-				App->camera->SetFOV(event.window.data1 / event.window.data2);
+				App->camera->SetFOV();
 				break;
 			}
 			break;
@@ -121,7 +122,13 @@ update_status ModuleInput::PreUpdate()
 			mouse_motion.y = event.motion.yrel / SCREEN_SIZE;
 			mouse.x = event.motion.x / SCREEN_SIZE;
 			mouse.y = event.motion.y / SCREEN_SIZE;
-			break;
+			break; 
+		case SDL_DROPFILE:
+				char* dropped_filedir = event.drop.file;
+				LOG(dropped_filedir);
+				App->rendererExercise->LoadDropModel(dropped_filedir);
+				App->camera->SetPos();
+				break;
 		}
 	}
 

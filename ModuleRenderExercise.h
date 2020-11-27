@@ -11,11 +11,14 @@ public:
 
 	bool Init();
 	bool Start();
+	bool CleanUp();
+
 	update_status PreUpdate();
 	update_status Update();
 	update_status PostUpdate();
-	bool CleanUp();
+
 	void* GetContext() { return context; }
+	void LoadDropModel(char* filename);
 
 private:
 	void* context;/*

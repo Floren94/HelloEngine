@@ -27,6 +27,8 @@ public:
 	int GetTextureWidth() { return App->texture->GetWidth(); }
 	int GetTextureHeight() { return App->texture->GetHeight(); }
 	unsigned GetMaterial(int material) { return material_vec[material]; }
+	vec GetCenter() { return centerP; }
+	double GetOuterZ() { return outerZ; }
 
 private:
 	void LoadMaterials();
@@ -35,4 +37,6 @@ private:
 	const aiScene* scene;
 	std::vector<unsigned int> material_vec;
 	std::vector<Mesh> mesh_vec;
+	vec centerP;
+	double outerZ;
 };

@@ -5,6 +5,7 @@
 #include "ModuleWindow.h"
 #include "ModuleInput.h"
 #include "ModuleDebugDraw.h"
+#include "ModuleModel.h"
 #include "SDL.h"
 #include "GL/glew.h"
 #include <chrono>
@@ -26,11 +27,19 @@ ModuleCamera::~ModuleCamera()
 // Called before Camera is available
 bool ModuleCamera::Init()
 {
+	SDL_DisplayMode DM;
+	SDL_GetDesktopDisplayMode(0, &DM);
+	double deskW = DM.w;
+	double deskH = DM.h;
+
+	aspectRatio = deskW / deskH;
+
 	frustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
 	frustum.SetViewPlaneDistances(0.1f, 200.0f);
-	frustum.SetHorizontalFovAndAspectRatio(DEGTORAD * 90.0f, 1.3f);
+	frustum.SetHorizontalFovAndAspectRatio(DEGTORAD * 90.0f, aspectRatio);
 
-	frustum.SetPos(float3(0, 2, -12));
+
+	frustum.SetPos(float3(0, 0, 0));
 	frustum.SetFront(float3::unitZ);
 	frustum.SetUp(float3::unitY);
 
@@ -80,34 +89,7 @@ update_status ModuleCamera::Update()
 		speed *= 2.0f;
 	}
 
-	if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT) {
-		int* mouseY = new int(1); 
-		int* mouseX = new int(1);
-		SDL_GetMouseState(NULL, mouseY);
-		SDL_GetMouseState(mouseX, NULL);
-
-		if (mouseY[0] > lastYmouse ) {
-			VerticalMove(speed / 2);
-			lastYmouse = mouseY[0];
-		}
-		else if (mouseY[0] < lastYmouse ) {
-			VerticalMove(-speed / 2);
-			lastYmouse = mouseY[0];
-		}
-		
-		if (mouseX[0] > lastXmouse ) {
-			SideMove(speed/2);
-			lastXmouse = mouseX[0];
-		}
-		else if (mouseX[0] < lastXmouse ) {
-			SideMove(-speed / 2);
-			lastXmouse = mouseX[0];
-		}
-		delete mouseY;
-		delete mouseX;
-		mouseY = nullptr;
-		mouseX = nullptr;
-	}
+	
 	else if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT &&
 		(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT)) {
 		int* mouseY = new int(1);
@@ -159,11 +141,38 @@ update_status ModuleCamera::Update()
 	else if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT &&
 		(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT)) {
 		RotateY(-speed * 6);
-	}
-	else if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT &&
+	}else if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT &&
 		(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT)) {
 		RotateY(speed * 6);
 	}else if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT) {
+		int* mouseY = new int(1);
+		int* mouseX = new int(1);
+		SDL_GetMouseState(NULL, mouseY);
+		SDL_GetMouseState(mouseX, NULL);
+
+		if (mouseY[0] > lastYmouse) {
+			VerticalMove(speed / 2);
+			lastYmouse = mouseY[0];
+		}
+		else if (mouseY[0] < lastYmouse) {
+			VerticalMove(-speed / 2);
+			lastYmouse = mouseY[0];
+		}
+
+		if (mouseX[0] > lastXmouse) {
+			SideMove(speed / 2);
+			lastXmouse = mouseX[0];
+		}
+		else if (mouseX[0] < lastXmouse) {
+			SideMove(-speed / 2);
+			lastXmouse = mouseX[0];
+		}
+		delete mouseY;
+		delete mouseX;
+		mouseY = nullptr;
+		mouseX = nullptr;
+	}
+	else if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT) {
 		int* mouseY = new int(1);
 		int* mouseX = new int(1);
 		SDL_GetMouseState(NULL, mouseY);
@@ -301,6 +310,34 @@ void ModuleCamera::Zoom(double dir) {
 
 }
 
-void ModuleCamera::SetFOV(float aspectRadio) {
-	frustum.SetHorizontalFovAndAspectRatio(frustum.HorizontalFov(), aspectRadio);
+void ModuleCamera::SetFOV() {
+	frustum.SetHorizontalFovAndAspectRatio(frustum.HorizontalFov(), aspectRatio);
+}
+
+void ModuleCamera::SetPos() {
+
+	double camPosZ = App->model->GetCenter().z;
+	double outerZ = App->model->GetOuterZ();
+	double modelPosX = App->model->GetCenter().x;
+
+	LOG("modelPosZ = %f, outer z = %f", camPosZ, outerZ);
+
+	vec pos = float3(modelPosX, 5, -(camPosZ + outerZ) * 5);
+	vec modelPos = { (float)modelPosX, 0 , App->model->GetCenter().z};
+	 
+	
+	vec front = frustum.Front();
+	float farDist = frustum.FarPlaneDistance();
+
+	vec forward = pos - modelPos;
+	forward.Normalize();
+
+	vec newRight = Cross(frustum.Up(), forward);
+	newRight.Normalize();
+
+	vec newUp = Cross(forward, newRight);
+
+	frustum.SetPos(pos);
+	frustum.SetUp(newUp);
+	frustum.SetFront(float3::unitZ);
 }

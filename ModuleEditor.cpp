@@ -13,6 +13,7 @@
 #include "GL/glew.h"
 #include <sstream>
 
+
 ModuleEditor::ModuleEditor()
 {
 }
@@ -57,6 +58,20 @@ update_status ModuleEditor::Update()
 {
     //ImGui::ShowDemoWindow(0);
 
+    static int seconds, milisecs, perfms;
+    if (seconds == 30) {
+        timer.StopTimer();
+    }
+    else {
+        timer.StartTimer();
+    }
+    seconds = timer.GetTime() / 1000;
+
+    timer.StartPerformanceTimer();
+    if (seconds == 10) {
+        perfms = milisecs;
+    }
+
     float menuSize = 0.0f;
     static float framerateMax = 0;
 
@@ -86,12 +101,17 @@ update_status ModuleEditor::Update()
 
     if (config) {
 
+
+
         ImVec2 pos(0.0f, menuSize);
         ImGui::SetNextWindowPos(pos);
         ImGui::Begin("Configuration", 0, ImGuiWindowFlags_NoMove);
 
         ImGui::Text("FPS Graph");
 
+
+        ImGui::Text("Timer: %g seconds", (double)seconds);
+        ImGui::Text("Performance Timer: %g miliseconds", (double)perfms);
 
         ImGui::PlotHistogram("250 fps", &fps_vec[0], fps_vec.size(), 0, "FPS", 0.0f, 250.0f, ImVec2(310, 100));
 
@@ -180,6 +200,8 @@ update_status ModuleEditor::Update()
 
         ImGui::End();
     }
+
+    milisecs = timer.GetPerformanceTime();
 
     return UPDATE_CONTINUE;
 }
