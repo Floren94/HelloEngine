@@ -33,6 +33,7 @@ private :
 	bool config = true;
 	bool console = true;
 	bool properties = true;
+	bool about = false;
 	int w = 0, h = 0;
 
 	Timer timer;

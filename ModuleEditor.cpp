@@ -68,7 +68,7 @@ update_status ModuleEditor::Update()
     seconds = timer.GetTime() / 1000;
 
     timer.StartPerformanceTimer();
-    if (seconds == 10) {
+    if (seconds == 1) {
         perfms = milisecs;
     }
 
@@ -79,11 +79,19 @@ update_status ModuleEditor::Update()
     fps_vec.push_back(io.Framerate);
     frames++;
 
+    SDL_GetWindowSize(App->window->window, &w, &h);
+    float fW = (float)w;
+    float fH = (float)h;
+
     ImGui::BeginMainMenuBar();
     if (ImGui::BeginMenu("Options")) {
         ImGui::MenuItem("Configuration Window", NULL, &config);
         ImGui::MenuItem("Console", NULL, &console);
         ImGui::MenuItem("Properties", NULL, &properties);
+        ImGui::MenuItem("About", NULL, &about); 
+        if (ImGui::MenuItem("GitHup Repository")) {
+            ShellExecute(0, 0, "https://github.com/Floren94/HelloEngine", 0, 0, SW_SHOWNORMAL);
+        }
         if (ImGui::MenuItem("Quit")) {
             return UPDATE_STOP;
         }
@@ -92,28 +100,43 @@ update_status ModuleEditor::Update()
     menuSize = ImGui::GetWindowSize().y;
     ImGui::EndMainMenuBar();
 
-    SDL_GetWindowSize(App->window->window, &w, &h);
-    float fW = (float)w;
-    float fH = (float)h;
+
+    if (about) {
+        ImGui::SetNextWindowPos({ (fW / 2) -200, fH / 2 - 100 });
+
+        ImGui::Begin("About");
+        ImGui::Text("This is Hello Engine, made by Floren Magrinya at UPC");
+
+        ImGui::SetWindowSize({ 400, 50 });
+
+        if (ImGui::IsWindowFocused()) isFocused = true;
+        else isFocused = false;
+
+        ImGui::End();
+    }
+
     fW = fW / 5;
     fH = fH - (fH / 4);
     ImVec2 size(fW, fH);
 
     if (config) {
 
-
-
         ImVec2 pos(0.0f, menuSize);
         ImGui::SetNextWindowPos(pos);
         ImGui::Begin("Configuration", 0, ImGuiWindowFlags_NoMove);
 
+        ImGui::Text("Timer: %g seconds", (double)seconds);
+        ImGui::Text("DeltaTime: %g seconds", App->camera->GetDelta());
+
+        ImVec2 mousePos = ImGui::GetMousePos();
+
+        ImGui::Text("Mouse Position: %g %g", mousePos.x, mousePos.y);
+
+        //ImGui::Text("Performance Timer: %g miliseconds", (double)perfms);
+
         ImGui::Text("FPS Graph");
 
-
-        ImGui::Text("Timer: %g seconds", (double)seconds);
-        ImGui::Text("Performance Timer: %g miliseconds", (double)perfms);
-
-        ImGui::PlotHistogram("250 fps", &fps_vec[0], fps_vec.size(), 0, "FPS", 0.0f, 250.0f, ImVec2(310, 100));
+        ImGui::PlotHistogram("250 fps", &fps_vec[0], fps_vec.size(), 0, "FPS", 0.0f, 250.0f, ImVec2(fW * 0.8f, 100));
 
         if (ImGui::CollapsingHeader("System Information")) {
 
@@ -134,7 +157,6 @@ update_status ModuleEditor::Update()
 
         ImGui::End();
     }
-
 
     if (properties) {
         fW = (float)w;

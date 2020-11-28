@@ -33,6 +33,7 @@ bool ModuleInput::Init()
 		ret = false;
 	}
 
+
 	return ret;
 }
 // Called before the first frame
@@ -45,6 +46,7 @@ bool ModuleInput::Start()
 update_status ModuleInput::PreUpdate()
 {
 	static SDL_Event event;
+	wheelMotion = 0;
 
 	mouse_motion = { 0, 0 };
 	memset(windowEvents, false, WE_COUNT * sizeof(bool));
@@ -123,6 +125,14 @@ update_status ModuleInput::PreUpdate()
 			mouse.x = event.motion.x / SCREEN_SIZE;
 			mouse.y = event.motion.y / SCREEN_SIZE;
 			break; 
+		case SDL_MOUSEWHEEL:
+			if (event.wheel.y > 0) {
+				wheelMotion = 1;
+			}
+			else if (event.wheel.y < 0) {
+				wheelMotion = -1;
+			}
+			break;
 		case SDL_DROPFILE:
 				char* dropped_filedir = event.drop.file;
 				LOG(dropped_filedir);

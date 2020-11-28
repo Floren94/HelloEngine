@@ -24,6 +24,7 @@ public:
 	void RotateX(double degree);
 	void RotateY(double degree);
 	void Zoom(double dir);
+	void Orbit(double dir);
 	void SetFOV();
 	void SetPos();
 
@@ -32,6 +33,7 @@ public:
 	float3 GetPosition() { return frustum.Pos(); }
 	float3 GetUp() { return frustum.Up(); }
 	float3 GetFront() { return frustum.Front(); }
+	double GetDelta() { return deltaTime; }
 
 private:
 	int lastYmouse = 0;
