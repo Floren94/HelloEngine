@@ -73,6 +73,7 @@ update_status ModuleCamera::Update()
 {
 
 	double speed = SPEED;
+	double degree = DEG;
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadMatrixf(*(frustum.ProjectionMatrix().Transposed().v));
@@ -87,12 +88,12 @@ update_status ModuleCamera::Update()
 
 	if (App->input->GetKey(SDL_SCANCODE_LSHIFT)) {
 		speed *= 2.0f;
+		degree *= 2.0f;
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_F)) {
-		SetPos();
+		lookAtModel();
 	}
-
 	else if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT &&
 		(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT) ||
 		App->input->GetWheel() != 0) {
@@ -187,11 +188,11 @@ update_status ModuleCamera::Update()
 		SDL_GetMouseState(mouseX, NULL);
 
 		if (mouseX[0] > lastXmouse + 1) {
-			Orbit(1);
+			Orbit(degree);
 			lastXmouse = mouseX[0];
 		}
 		else if (mouseX[0] < lastXmouse - 1) {
-			Orbit(-1);
+			Orbit(-degree);
 			lastXmouse = mouseX[0];
 		}
 	}
@@ -341,22 +342,26 @@ void ModuleCamera::Orbit(double dir) {
 
 	frustum.SetPos({ (float)rotatedX, frustum.Pos().y , (float)rotatedZ });
 
+	lookAtModel();
+}
+
+void ModuleCamera::SetFOV() {
+	frustum.SetHorizontalFovAndAspectRatio(frustum.HorizontalFov(), aspectRatio);
+}
+
+void ModuleCamera::lookAtModel() {
 	double modelPosX = App->model->GetCenter().x;
 
-	vec pos =  frustum.Pos();
+	vec pos = frustum.Pos();
 	vec modelPos = { App->model->GetCenter().x, 0 , App->model->GetCenter().z };
 
 	vec forward = modelPos - pos;
 	forward.Normalize();
 
-	vec newUp = Cross(Cross(forward, float3::unitY),forward);
+	vec newUp = Cross(Cross(forward, float3::unitY), forward);
 
 	frustum.SetUp(newUp);
 	frustum.SetFront(forward);
-}
-
-void ModuleCamera::SetFOV() {
-	frustum.SetHorizontalFovAndAspectRatio(frustum.HorizontalFov(), aspectRatio);
 }
 
 void ModuleCamera::SetPos() {
@@ -368,21 +373,7 @@ void ModuleCamera::SetPos() {
 	LOG("modelPosZ = %f, outer z = %f", camPosZ, outerZ);
 
 	vec pos = float3(modelPosX, 5, -(camPosZ + outerZ) * 5);
-	vec modelPos = { (float)modelPosX, 0 , App->model->GetCenter().z};
-	 
-	
-	vec front = frustum.Front();
-	float farDist = frustum.FarPlaneDistance();
-
-	vec forward =  modelPos - pos;
-	forward.Normalize();
-
-	vec newRight = Cross(frustum.Up(), forward);
-	newRight.Normalize();
-
-	vec newUp = Cross(forward, newRight);
-
 	frustum.SetPos(pos);
-	frustum.SetUp(newUp);
-	frustum.SetFront(forward);
+
+	lookAtModel();
 }

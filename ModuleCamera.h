@@ -27,6 +27,7 @@ public:
 	void Orbit(double dir);
 	void SetFOV();
 	void SetPos();
+	void lookAtModel();
 
 	float4x4 GetProjection() { return projectionGL; }
 	float4x4 GetView() { return viewMatrix; }
@@ -41,7 +42,7 @@ private:
 	double aspectRatio;
 	double deltaTime;
 	bool startDelta = false;
-	const double DEG = 0.5f;
+	const double DEG = 2.0f;
 	const double SPEED = 0.1f;
 	const float DEGTORAD = (math::pi / 180);
 	Frustum frustum;

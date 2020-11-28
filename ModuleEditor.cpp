@@ -126,7 +126,7 @@ update_status ModuleEditor::Update()
         ImGui::Begin("Configuration", 0, ImGuiWindowFlags_NoMove);
 
         ImGui::Text("Timer: %g seconds", (double)seconds);
-        ImGui::Text("DeltaTime: %g seconds", App->camera->GetDelta());
+        //ImGui::Text("DeltaTime: %g seconds", App->camera->GetDelta());
 
         ImVec2 mousePos = ImGui::GetMousePos();
 
@@ -136,17 +136,17 @@ update_status ModuleEditor::Update()
 
         ImGui::Text("FPS Graph");
 
-        ImGui::PlotHistogram("250 fps", &fps_vec[0], fps_vec.size(), 0, "FPS", 0.0f, 250.0f, ImVec2(fW * 0.8f, 100));
+        ImGui::PlotHistogram("<-144+", &fps_vec[0], fps_vec.size(), 0, "FPS", 0.0f, 144.0f, ImVec2(fW * 0.8f, 100));
 
         if (ImGui::CollapsingHeader("System Information")) {
 
-            SDL_version compiled;
+            SDL_version sdl_ver;
+            
+            SDL_VERSION(&sdl_ver);
 
-            SDL_VERSION(&compiled);
-
-            ImGui::Text("CPUs: %d", SDL_GetCPUCount());
-            ImGui::Text("RAM: %.2f GB", SDL_GetSystemRAM() / 1024.0f);
-            ImGui::Text("SDL version compiled: %d.%d.%d", compiled.major, compiled.minor, compiled.patch);
+            ImGui::Text("System CPUs: %d", SDL_GetCPUCount());
+            ImGui::Text("System RAM: %.2f GB", SDL_GetSystemRAM() / 1024.0f);
+            ImGui::Text("SDL version: %d.%d.%d", sdl_ver.major, sdl_ver.minor, sdl_ver.patch);
             ImGui::Text("OpenGL version: %s", (char*)glGetString(GL_VERSION));
         }
 

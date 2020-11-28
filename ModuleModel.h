@@ -17,6 +17,7 @@ public:
 	bool CleanUp();
 
 	void Load(const char* file_name);
+	void ReloadTexture(const char* file_name);
 	void Draw();
 
 	int GetVertices();
@@ -37,6 +38,7 @@ private:
 	const aiScene* scene;
 	std::vector<unsigned int> material_vec;
 	std::vector<Mesh> mesh_vec;
+	std::string filepath;
 	vec centerP;
 	double outerZ;
 };

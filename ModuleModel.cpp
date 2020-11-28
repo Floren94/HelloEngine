@@ -45,6 +45,7 @@ bool ModuleModel::CleanUp()
 
 void ModuleModel::Load(const char* file_name) {
 	scene = aiImportFile(file_name, aiProcessPreset_TargetRealtime_MaxQuality);
+	filepath = file_name;
 	if (scene) {
 		LoadMaterials();
 		LoadMeshes();
@@ -54,10 +55,22 @@ void ModuleModel::Load(const char* file_name) {
 	}
 }
 
+void ModuleModel::ReloadTexture(const char* file_name) {
+	for (unsigned i = 0; i < material_vec.size(); ++i) {
+		App->texture->FreeTexture(material_vec[i]);
+	}
+
+	aiString file;
+
+	for (unsigned i = 0; i < scene->mNumMaterials; ++i)
+	{
+		material_vec.push_back(App->texture->LoadTexture(file_name));
+	}
+}
+
 void ModuleModel::LoadMaterials() {
 	aiString file;
 
-	//material_vec.reserve(scene->mNumMaterials);
 	for (unsigned i = 0; i < scene->mNumMaterials; ++i)
 	{
 		if (scene->mMaterials[i]->GetTexture(aiTextureType_DIFFUSE, 0, &file) == AI_SUCCESS)
@@ -69,7 +82,6 @@ void ModuleModel::LoadMaterials() {
 
 void ModuleModel::LoadMeshes() {
 
-	//mesh_vec.reserve(scene->mNumMaterials);
 	for (unsigned i = 0; i < scene->mNumMeshes; ++i)
 	{
 		aiMesh* my_Mesh = scene->mMeshes[i];

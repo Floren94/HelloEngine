@@ -120,12 +120,11 @@ void ModuleRenderExercise::LoadDropModel(char* filename) {
 		App->model->CleanUp();
 		App->model->Load(filename);
 		SDL_free(filename);
-	}else if (s == "png" || s == "dds") {
-		App->model->CleanUp();
-		App->model->Load(filename);
+	}else if (s == "png" || s == "dds" || s == "jpg") {
+		App->model->ReloadTexture(filename);
 		SDL_free(filename);
 	}
 	else {
-		LOG("%s not FBX file", s);
+		LOG("%s file not supported", s);
 	}
 }

@@ -47,7 +47,15 @@ unsigned ModuleTexture::LoadTexture(const char* file_name) {
 	}
 	if (success == IL_FALSE)
 	{
-		LOG("Error loading texture...");
+		std::string texturePath = file_name;
+		texturePath = ".//Game//" + texturePath.substr(texturePath.find_last_of("\\/", texturePath.length() - 1));
+		success = ilLoadImage(texturePath.c_str());
+		if (success == IL_FALSE)
+		{
+			texturePath = file_name;
+			texturePath = ".//Game//Textures//" + texturePath.substr(texturePath.find_last_of("\\/", texturePath.length() - 1));
+			success = ilLoadImage(texturePath.c_str());
+		}else LOG("Error loading texture...");
 	}
 
 	iluGetImageInfo(&info);
@@ -71,6 +79,7 @@ unsigned ModuleTexture::LoadTexture(const char* file_name) {
 	ilDeleteImage(texid);
 	return textureID;
 }
+
 
 void ModuleTexture::FreeTexture(unsigned textID) {
 	glDeleteTextures(1, &textID);
