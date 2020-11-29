@@ -20,7 +20,7 @@ public:
 	bool CleanUp();
 
 	void RenderUi();
-	void AddLog(const char* fmt);
+	void AddLogToConsole(const char* fmt);
 
 	bool isFocused = false;
 

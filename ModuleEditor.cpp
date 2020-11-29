@@ -246,7 +246,7 @@ void ModuleEditor::RenderUi()
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-void ModuleEditor::AddLog(const char* fmt)
+void ModuleEditor::AddLogToConsole(const char* fmt)
 {
     va_list args;
     va_start(args, fmt);

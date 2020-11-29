@@ -136,6 +136,7 @@ update_status ModuleInput::PreUpdate()
 		case SDL_DROPFILE:
 				char* dropped_filedir = event.drop.file;
 				LOG(dropped_filedir);
+				dropPath = dropped_filedir;
 				App->rendererExercise->LoadDropModel(dropped_filedir);
 				App->camera->SetPos();
 				break;

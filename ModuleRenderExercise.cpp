@@ -28,7 +28,7 @@ ModuleRenderExercise::~ModuleRenderExercise()
 }
 
 void myCallback(const char* msg, char* userData) {
-	App->editor->AddLog(msg);
+	App->editor->AddLogToConsole(msg);
 }
 
 // Called before RenderExercise is available

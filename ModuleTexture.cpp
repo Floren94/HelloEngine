@@ -1,6 +1,7 @@
 #include "Application.h"
 #include "ModuleTexture.h"
 #include "ModuleProgram.h"
+#include "ModuleEditor.h"
 #include "il.h"
 #include "ilu.h"
 
@@ -40,22 +41,52 @@ unsigned ModuleTexture::LoadTexture(const char* file_name) {
 	unsigned textureID;
 
 	success = ilLoadImage(file_name);
+	if (success == IL_FALSE)
+	{
+		App->editor->AddLogToConsole("Failed to locate texture \n");
+		bool checkString = false;
+		std::string texturePath = file_name;
+		std::string fbxpath = App->input->GetDropPath();
+		App->editor->AddLogToConsole("Searching texture at fbx directory\n");
+		if (fbxpath.find('\\') != std::string::npos) {
+			fbxpath = fbxpath.substr(0, fbxpath.find('.')) + texturePath.substr(texturePath.find('.'), texturePath.length() - 1);
+			success = ilLoadImage(fbxpath.c_str());
+		}
+
+		if (success == IL_FALSE) {
+			App->editor->AddLogToConsole("Failed to find texture at fbx directory\n");
+			App->editor->AddLogToConsole("Searching texture at /Game\n");
+			if (texturePath.find("\\") != std::string::npos && success == IL_FALSE) {
+				checkString = true;
+				texturePath = ".//Game//" + texturePath.substr(texturePath.find_last_of("\\", texturePath.length() - 1));
+			}
+			else {
+				texturePath = ".//Game//" + texturePath;
+			}
+			success = ilLoadImage(texturePath.c_str());
+		}
+
+		if (success == IL_FALSE)
+		{
+			App->editor->AddLogToConsole("Failed to find texture at ./Game directory\n");
+			App->editor->AddLogToConsole("Searching texture at /Textures\n");
+			texturePath = file_name;
+
+			if (checkString) {
+				texturePath = ".//Game//Textures//" + texturePath.substr(texturePath.find_last_of("/", texturePath.length() - 1));
+			}
+			else {
+				texturePath = ".//Game//Textures//" + texturePath;
+			}
+			success = ilLoadImage(texturePath.c_str());
+
+			if(success == IL_FALSE) App->editor->AddLogToConsole("--Failed to load Texture\n");;
+		}
+	}
 	if (success == IL_TRUE)
 	{
 		success = ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
-
-	}
-	if (success == IL_FALSE)
-	{
-		std::string texturePath = file_name;
-		texturePath = ".//Game//" + texturePath.substr(texturePath.find_last_of("\\/", texturePath.length() - 1));
-		success = ilLoadImage(texturePath.c_str());
-		if (success == IL_FALSE)
-		{
-			texturePath = file_name;
-			texturePath = ".//Game//Textures//" + texturePath.substr(texturePath.find_last_of("\\/", texturePath.length() - 1));
-			success = ilLoadImage(texturePath.c_str());
-		}else LOG("Error loading texture...");
+		App->editor->AddLogToConsole("Texture Loaded\n");
 	}
 
 	iluGetImageInfo(&info);

@@ -3,6 +3,7 @@
 #include "Globals.h"
 #include "Point.h"
 #include "SDL/include/SDL_scancode.h"
+#include <iostream>
 
 typedef unsigned __int8 Uint8;
 
@@ -55,6 +56,8 @@ public:
 	const iPoint& GetMousePosition() const;
 	const int& GetWheel() { return wheelMotion; }
 
+	std::string GetDropPath() { return dropPath; }
+
 private:
 	bool		windowEvents[WE_COUNT];
 	KeyState* keyboard;
@@ -62,4 +65,5 @@ private:
 	iPoint mouse_motion;
 	iPoint mouse;
 	int wheelMotion;
+	std::string dropPath;
 };
