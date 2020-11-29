@@ -133,7 +133,7 @@ update_status ModuleEditor::Update()
                 App->window->SetFlag(SDL_WINDOW_RESIZABLE, resizable);
             }
             if (ImGui::Checkbox("Borderless Window", &borderless)) {
-                App->window->SetFlag(SDL_WINDOW_RESIZABLE, borderless);
+                App->window->SetFlag(SDL_WINDOW_BORDERLESS, borderless);
             }
         }
 
