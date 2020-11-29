@@ -22,7 +22,7 @@ public :
 	void DeleteBuff();
 
 	vec	 GetCenter();
-	double GetOuterZ() { return maxZ; };
+	double GetOuterZ() const { return maxZ; };
 
 private :
 	unsigned int vbo = 0, ebo = 0, vao = 0;

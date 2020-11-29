@@ -2,15 +2,6 @@
 #include "Application.h"
 #include "ModuleWindow.h"
 
-ModuleWindow::ModuleWindow()
-{
-}
-
-// Destructor
-ModuleWindow::~ModuleWindow()
-{
-}
-
 // Called before render is available
 bool ModuleWindow::Init()
 {
@@ -25,9 +16,13 @@ bool ModuleWindow::Init()
 	else
 	{
 		//Create window
-		int width = SCREEN_WIDTH;
-		int height = SCREEN_HEIGHT;
-		Uint32 flags = SDL_WINDOW_SHOWN |  SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
+		SDL_DisplayMode DM;
+		SDL_Rect r;
+		SDL_GetDisplayUsableBounds(0, &r);
+		int width = r.w;
+		int height = r.h;
+
+		Uint32 flags = SDL_WINDOW_SHOWN |  SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED;
 
 		if(FULLSCREEN == true)
 		{

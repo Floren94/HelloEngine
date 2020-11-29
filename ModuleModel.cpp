@@ -6,24 +6,12 @@
 #include "Assimp/postprocess.h"
 #include "Assimp/Importer.hpp"
 
-ModuleModel::ModuleModel()
-{
-}
-
-// Destructor
-ModuleModel::~ModuleModel()
-{
-}
-
-// Called before render is available
 bool ModuleModel::Init()
 {
 	centerP = { 0,0,0 };
 	return true;
 }
 
-
-// Called every draw update
 update_status ModuleModel::Update()
 {
 	return UPDATE_CONTINUE;
@@ -123,9 +111,4 @@ int ModuleModel::GetVertices() {
 	}
 
 	return vertices;
-}
-
-int ModuleModel::GetTriangles() {
-
-	return GetVertices() / 3;
 }

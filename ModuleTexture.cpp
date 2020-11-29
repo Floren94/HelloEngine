@@ -37,12 +37,12 @@ unsigned ModuleTexture::LoadTexture(const char* file_name) {
 	ilBindImage(texid);
 
 	ILboolean success;
-	//ILenum Error;
 	unsigned textureID;
 
 	success = ilLoadImage(file_name);
 	if (success == IL_FALSE)
 	{
+		// texture not in ./
 		App->editor->AddLogToConsole("Failed to locate texture \n");
 		bool checkString = false;
 		std::string texturePath = file_name;

@@ -6,16 +6,6 @@
 #include "SDL.h"
 #include "GL/glew.h"
 
-
-ModuleProgram::ModuleProgram()
-{
-}
-
-// Destructor
-ModuleProgram::~ModuleProgram()
-{
-}
-
 bool ModuleProgram::Init()
 {
 	SDL_GL_SetAttribute(
@@ -25,8 +15,16 @@ bool ModuleProgram::Init()
 	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 
-	vertex_id = CompileShader(GL_VERTEX_SHADER, LoadShaderSource("Shaders/Vertex.vert"));
-	fragment_id = CompileShader(GL_FRAGMENT_SHADER, LoadShaderSource("Shaders/Fragment.frag"));
+	char* vertP = LoadShaderSource("Shaders/Vertex.vert");
+	char* fragP = LoadShaderSource("Shaders/Fragment.frag");
+
+	vertex_id = CompileShader(GL_VERTEX_SHADER, vertP);
+	fragment_id = CompileShader(GL_FRAGMENT_SHADER, fragP);
+
+	delete vertP;
+	delete fragP;
+	vertP = nullptr;
+	fragP = nullptr;
 
 	program = CreateProgram(vertex_id, fragment_id);
 	return true;
@@ -40,39 +38,6 @@ bool ModuleProgram::CleanUp()
 	glDeleteProgram(program);
 	return true;
 }
-
-//
-//unsigned ModuleProgram::CreateTriangleVBO()
-//{
-//	float vtx_data[] = {
-//	-1.0f, -1.0f, 0.0f, // ← v0 pos tri1
-//	1.0f, 1.0f, 0.0f, // ← v1 pos tri1
-//	-1.0f, 1.0f, 0.0f, // ← v2 pos tri1
-//
-//	-1.0f, -1.0f, 0.0f, // ← v0 pos tri2
-//	1.0f, -1.0f, 0.0f,// ← v1 pos tri2
-//	1.0f, 1.0f, 0.0f,// ← v2 pos tri2
-//
-//	0.0f, 0.0f, // ← v0 texcoord tri1
-//	1.0f, 1.0f, // ← v1 texcoord tri1
-//	0.0f, 1.0f,  // ← v2 texcoord tri1
-//
-//	0.0f, 0.0f, // ← v0 texcoord tri2
-//	1.0f, 0.0f, // ← v1 texcoord tri2
-//	1.0f, 1.0f // ← v2 texcoord tri2
-//	};
-//	unsigned vbo;
-//	glGenBuffers(1, &vbo);
-//	glBindBuffer(GL_ARRAY_BUFFER, vbo); // set vbo active
-//	glBufferData(GL_ARRAY_BUFFER, sizeof(vtx_data), vtx_data, GL_STATIC_DRAW);
-//
-//	return vbo;
-//}
-//// This function must be called one time at destruction of vertex buffer
-//void ModuleProgram::DestroyVBO(unsigned vbo)
-//{
-//	glDeleteBuffers(1, &vbo);
-//}
 
 char* ModuleProgram::LoadShaderSource(const char* shader_file_name)
 {
@@ -140,35 +105,3 @@ unsigned ModuleProgram::CreateProgram(unsigned vtx_shader, unsigned frg_shader)
 	glDeleteShader(frg_shader);
 	return program_id;
 }
-
-//// This function must be called each frame for drawing the triangle
-//void ModuleProgram::RenderVBO(unsigned vbo, unsigned program)
-//{
-//	float4x4 proj, view, model;
-//
-//	proj = App->camera->GetProjection();
-//	view = App->camera->GetView();
-//	model = float4x4::FromTRS(float3(0.0f, 0.0f, 0.0f),
-//		float4x4::RotateZ(pi),
-//		float3(1.0f, 1.0f, 0.0f));
-//
-//	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-//	glEnableVertexAttribArray(0);
-//	glEnableVertexAttribArray(1);
-//	// size = 3 float per vertex
-//	// stride = 0 is equivalent to stride = sizeof(float)*3
-//	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-//	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 6 * 3));
-//	glUseProgram(program);
-//	//1 triangle to draw = 3 vertices
-//
-//	glActiveTexture(GL_TEXTURE0);
-//	glBindTexture(GL_TEXTURE_2D, App->texture->textureID);
-//	glUniform1i(glGetUniformLocation(program, "mytexture"), 0);
-//
-//	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, &proj[0][0]);
-//	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &view[0][0]);
-//	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &model[0][0]);
-//
-//	glDrawArrays(GL_TRIANGLES, 0, 6);
-//}

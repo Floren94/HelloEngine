@@ -10,24 +10,17 @@ class ModuleWindow : public Module
 {
 public:
 
-	ModuleWindow();
+	ModuleWindow() {};
+	~ModuleWindow() {};
 
-	// Destructor
-	virtual ~ModuleWindow();
-
-	// Called before quitting
 	bool Init();
-
-	// Called before quitting
 	bool CleanUp();
 
 	void SetFlag(SDL_WindowFlags flag, bool active);
 
 public:
-	//The window we'll be rendering to
 	SDL_Window* window = NULL;
 
-	//The surface contained by the window
 	SDL_Surface* screen_surface = NULL;
 };
 

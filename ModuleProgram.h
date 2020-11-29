@@ -15,22 +15,19 @@
 class ModuleProgram : public Module
 {
 public:
-	ModuleProgram();
-	~ModuleProgram();
+	ModuleProgram() {};
+	~ModuleProgram() {};
 
 	bool Init();
 	bool CleanUp();
 
-	//unsigned CreateTriangleVBO();
 	unsigned CompileShader(unsigned type, const char* source);
 	unsigned CreateProgram(unsigned vtx_shader, unsigned frg_shader);
 	char* LoadShaderSource(const char* shader_file_name);
-	//void RenderVBO(unsigned vbo, unsigned program);
-	//void DestroyVBO(unsigned vbo);
 
-	unsigned int GetProgram() { return program; }
+	unsigned int GetProgram() const { return program; }
 
 private:
-	unsigned program, vertex_id, fragment_id;
+	unsigned int program, vertex_id, fragment_id;
 };
 

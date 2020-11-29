@@ -9,8 +9,8 @@ struct SDL_Rect;
 class ModuleRender : public Module
 {
 public:
-	ModuleRender();
-	~ModuleRender();
+	ModuleRender() {};
+	~ModuleRender() {};
 
 	bool Init();
 	update_status PreUpdate();

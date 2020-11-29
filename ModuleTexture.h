@@ -17,8 +17,8 @@ public:
 	unsigned LoadTexture(const char* file_name);
 	void FreeTexture(unsigned textID);
 
-	int GetWidth() { return width; }
-	int GetHeight() { return height; }
+	int GetWidth() const { return width; }
+	int GetHeight() const { return height; }
 private:
 	int width = 0, height = 0;
 };

@@ -11,26 +11,15 @@
 #include <chrono>
 
 
-Uint64 now = 0;
-Uint64 last = 0;
 
-ModuleCamera::ModuleCamera()
-{
-}
-
-// Destructor
-ModuleCamera::~ModuleCamera()
-{
-
-}
-
-// Called before Camera is available
 bool ModuleCamera::Init()
 {
 	SDL_DisplayMode DM;
 	SDL_GetDesktopDisplayMode(0, &DM);
+
 	double deskW = DM.w;
 	double deskH = DM.h;
+
 
 	aspectRatio = deskW / deskH;
 
@@ -82,20 +71,22 @@ update_status ModuleCamera::Update()
 	}
 
 	projectionGL = frustum.ProjectionMatrix();
-
 	viewMatrix = frustum.ViewMatrix();
 
 	if (App->input->GetKey(SDL_SCANCODE_LSHIFT)) {
+		//double speed
 		speed *= 2.0f;
 		degree *= 2.0f;
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_F)) {
+		//focus
 		SetPos();
 	}
 	else if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT &&
 		(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT) ||
 		App->input->GetWheel() != 0) {
+		//zoom
 		int* mouseY = new int(1);
 		SDL_GetMouseState(NULL, mouseY);
 
@@ -112,6 +103,7 @@ update_status ModuleCamera::Update()
 		delete mouseY;
 		mouseY = nullptr;
 	}
+	//up and down 
 	else if (App->input->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT &&
 		(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT)) {
 		VerticalMove(speed);
@@ -120,6 +112,7 @@ update_status ModuleCamera::Update()
 		(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT)) {
 		VerticalMove(-speed);
 	}
+	//forward and backward
 	else if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT &&
 		(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT)) {
 		Move(speed);
@@ -128,6 +121,7 @@ update_status ModuleCamera::Update()
 		(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT)) {
 		Move(-speed);
 	}
+	//lateral move with A and D
 	else if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT &&
 		(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT)) {
 		SideMove(speed);
@@ -136,22 +130,25 @@ update_status ModuleCamera::Update()
 		(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT)) {
 		SideMove(-speed);
 	}
+	//pitch arrows
 	else if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT &&
 		(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT)) {
-		RotateX(speed / 6);
+		RotateX(speed * 3);
 	}
 	else if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT &&
 		(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT)) {
-		RotateX(-speed / 6);
+		RotateX(-speed * 3);
 	}
+	//yaw arrows
 	else if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT &&
 		(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT)) {
-		RotateY(-speed * 6);
+		RotateY(-speed * 3);
 	}
 	else if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT &&
 		(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT)) {
-		RotateY(speed * 6);
+		RotateY(speed * 3);
 	}
+	//vertical + hotizontal move mouse
 	else if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT) {
 		int* mouseY = new int(1);
 		int* mouseX = new int(1);
@@ -180,6 +177,7 @@ update_status ModuleCamera::Update()
 		mouseY = nullptr;
 		mouseX = nullptr;
 	}
+	//Orbit
 	else if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_LALT)) {
 		int* mouseY = new int(1);
 		int* mouseX = new int(1);
@@ -195,6 +193,7 @@ update_status ModuleCamera::Update()
 			lastXmouse = mouseX[0];
 		}
 	}
+	//pitch + yaw mouse
 	else if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT) {
 		int* mouseY = new int(1);
 		int* mouseX = new int(1);
@@ -256,7 +255,6 @@ void ModuleCamera::VerticalMove(double dir) {
 	frustum.SetPos(newP);
 
 }
-
 
 void ModuleCamera::Move(double dir) {
 

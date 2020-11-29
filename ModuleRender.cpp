@@ -8,17 +8,8 @@
 #include "src/Geometry/Frustum.h"
 #include "src/Math/float3x3.h"
 
+//This module was the first exercise module, not used. Isntead using RenderExercise.
 
-ModuleRender::ModuleRender()
-{
-}
-
-// Destructor
-ModuleRender::~ModuleRender()
-{
-}
-
-// Called before render is available
 bool ModuleRender::Init()
 {
 	LOG("Creating Renderer context");

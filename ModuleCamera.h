@@ -8,8 +8,8 @@
 class ModuleCamera : public Module
 {
 public:
-	ModuleCamera();
-	~ModuleCamera();
+	ModuleCamera() {};
+	~ModuleCamera() {};
 
 	bool Init();
 	bool Start() { SetPos(); return true; }
@@ -29,16 +29,18 @@ public:
 	void SetPos();
 	void lookAtModel();
 
-	float4x4 GetProjection() { return projectionGL; }
-	float4x4 GetView() { return viewMatrix; }
-	float3 GetPosition() { return frustum.Pos(); }
-	float3 GetUp() { return frustum.Up(); }
-	float3 GetFront() { return frustum.Front(); }
-	double GetDelta() { return deltaTime; }
+	float4x4 GetProjection() const { return projectionGL; }
+	float4x4 GetView() const { return viewMatrix; }
+	float3 GetPosition() const { return frustum.Pos(); }
+	float3 GetUp() const { return frustum.Up(); }
+	float3 GetFront() const { return frustum.Front(); }
+	double GetDelta() const { return deltaTime; }
 
 private:
 	int lastYmouse = 0;
 	int lastXmouse = 0;
+	int now = 0;
+	int last = 0;
 	double aspectRatio;
 	double deltaTime;
 	bool startDelta = false;

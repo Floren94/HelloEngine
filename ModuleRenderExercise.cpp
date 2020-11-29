@@ -18,15 +18,6 @@
 #include "src/Math/float4x4.h"
 #include "src/Math/float3x3.h"
 
-ModuleRenderExercise::ModuleRenderExercise()
-{
-}
-
-// Destructor
-ModuleRenderExercise::~ModuleRenderExercise()
-{
-}
-
 void myCallback(const char* msg, char* userData) {
 	App->editor->AddLogToConsole(msg);
 }
@@ -65,7 +56,6 @@ bool ModuleRenderExercise::Start() {
 
 update_status ModuleRenderExercise::PreUpdate()
 {
-
 	int w = 0;
 	int h = 0;
 	SDL_GetWindowSize(App->window->window, &w, &h);

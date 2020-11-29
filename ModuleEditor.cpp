@@ -56,21 +56,13 @@ update_status ModuleEditor::PreUpdate()
 
 update_status ModuleEditor::Update()
 {
-    //ImGui::ShowDemoWindow(0);
+    //Timer tests done in class (post assignment classes)
+    static int seconds, milisecs;
 
-    static int seconds, milisecs, perfms;
-    if (seconds == 30) {
-        timer.StopTimer();
-    }
-    else {
+    if (seconds < 1) {
         timer.StartTimer();
     }
     seconds = timer.GetTime() / 1000;
-
-    timer.StartPerformanceTimer();
-    if (seconds == 1) {
-        perfms = milisecs;
-    }
 
     float menuSize = 0.0f;
     static float framerateMax = 0;
@@ -83,6 +75,7 @@ update_status ModuleEditor::Update()
     float fW = (float)w;
     float fH = (float)h;
 
+    //MenuBar
     ImGui::BeginMainMenuBar();
     if (ImGui::BeginMenu("Options")) {
         ImGui::MenuItem("Configuration Window", NULL, &config);
@@ -100,7 +93,7 @@ update_status ModuleEditor::Update()
     menuSize = ImGui::GetWindowSize().y;
     ImGui::EndMainMenuBar();
 
-
+    //about window
     if (about) {
         ImGui::SetNextWindowPos({ (fW / 2) -200, fH / 2 - 100 });
 
@@ -119,6 +112,7 @@ update_status ModuleEditor::Update()
     fH = fH - (fH / 4);
     ImVec2 size(fW, fH);
 
+    //config window
     if (config) {
 
         ImVec2 pos(0.0f, menuSize);
@@ -167,7 +161,7 @@ update_status ModuleEditor::Update()
 
         ImGui::End();
     }
-
+    //properties window
     if (properties) {
         fW = (float)w;
         fW = fW - (fW / 5);
@@ -213,7 +207,7 @@ update_status ModuleEditor::Update()
 
         ImGui::End();
     }
-
+    //console window
     if (console) {
         fH = (float)h;
         fH = fH - (fH / 4);
@@ -233,7 +227,6 @@ update_status ModuleEditor::Update()
         ImGui::End();
     }
 
-    milisecs = timer.GetPerformanceTime();
 
     return UPDATE_CONTINUE;
 }
@@ -241,13 +234,14 @@ update_status ModuleEditor::Update()
 update_status ModuleEditor::PostUpdate()
 {
     if (frames == 5) {
-        fps_vec.erase(fps_vec.begin());
+        for (int i = 0; i < 3; ++i){
+            fps_vec.erase(fps_vec.begin());
+        }
         frames = 0;
     }
 
     return UPDATE_CONTINUE;
 }
-
 
 void ModuleEditor::RenderUi()
 {
