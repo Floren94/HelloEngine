@@ -55,20 +55,20 @@ unsigned ModuleTexture::LoadTexture(const char* file_name) {
 
 		if (success == IL_FALSE) {
 			App->editor->AddLogToConsole("Failed to find texture at fbx directory\n");
-			App->editor->AddLogToConsole("Searching texture at /Game\n");
+			App->editor->AddLogToConsole("Searching texture at /Assets\n");
 			if (texturePath.find("\\") != std::string::npos && success == IL_FALSE) {
 				checkString = true;
-				texturePath = ".//Game//" + texturePath.substr(texturePath.find_last_of("\\", texturePath.length() - 1));
+				texturePath = ".//Assets//" + texturePath.substr(texturePath.find_last_of("\\", texturePath.length() - 1));
 			}
 			else {
-				texturePath = ".//Game//" + texturePath;
+				texturePath = ".//Assets//" + texturePath;
 			}
 			success = ilLoadImage(texturePath.c_str());
 		}
 
 		if (success == IL_FALSE)
 		{
-			App->editor->AddLogToConsole("Failed to find texture at ./Game directory\n");
+			App->editor->AddLogToConsole("Failed to find texture at ./Assets directory\n");
 			App->editor->AddLogToConsole("Searching texture at /Textures\n");
 			texturePath = file_name;
 

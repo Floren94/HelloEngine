@@ -44,14 +44,20 @@ bool ModuleModel::CleanUp()
 }
 
 void ModuleModel::Load(const char* file_name) {
-	scene = aiImportFile(file_name, aiProcessPreset_TargetRealtime_MaxQuality);
 	filepath = file_name;
+	scene = aiImportFile(file_name, aiProcessPreset_TargetRealtime_MaxQuality);
 	if (scene) {
 		LoadMaterials();
 		LoadMeshes();
 	}
 	else {
-		LOG("Error loading %s: %s", aiGetErrorString());
+		std::string assetPath = "./Assets/" + filepath; 
+		scene = aiImportFile(assetPath.c_str(), aiProcessPreset_TargetRealtime_MaxQuality);
+		if (scene) {
+			LoadMaterials();
+			LoadMeshes();
+		}else App->editor->AddLogToConsole(("Error loading %s: %s", aiGetErrorString()));
+		
 	}
 }
 
