@@ -33,7 +33,10 @@ private :
 	bool config = true;
 	bool console = true;
 	bool properties = true;
-	bool about = false;
+	bool about = false; 
+	bool fullscreen = false;
+	bool borderless = false;
+	bool resizable = true;
 	int w = 0, h = 0;
 
 	Timer timer;

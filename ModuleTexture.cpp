@@ -73,10 +73,10 @@ unsigned ModuleTexture::LoadTexture(const char* file_name) {
 			texturePath = file_name;
 
 			if (checkString) {
-				texturePath = ".//Game//Textures//" + texturePath.substr(texturePath.find_last_of("/", texturePath.length() - 1));
+				texturePath = ".//Game//Textures//" + texturePath.substr(texturePath.find_last_of("\\", texturePath.length() - 1));
 			}
 			else {
-				texturePath = ".//Game//Textures//" + texturePath;
+				texturePath = ".//Textures//" + texturePath;
 			}
 			success = ilLoadImage(texturePath.c_str());
 

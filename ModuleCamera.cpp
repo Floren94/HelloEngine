@@ -92,7 +92,7 @@ update_status ModuleCamera::Update()
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_F)) {
-		lookAtModel();
+		SetPos();
 	}
 	else if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT &&
 		(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT) ||
@@ -203,11 +203,11 @@ update_status ModuleCamera::Update()
 		SDL_GetMouseState(mouseX, NULL);
 
 		if (mouseY[0] > lastYmouse + 1) {
-			RotateX(speed / 18);
+			RotateX(speed * 2);
 			lastYmouse = mouseY[0];
 		}
 		else if (mouseY[0] < lastYmouse - 1) {
-			RotateX(-speed / 18);
+			RotateX(-speed * 2);
 			lastYmouse = mouseY[0];
 		}
 
@@ -300,11 +300,11 @@ void ModuleCamera::SideMove(double dir) {
 
 void ModuleCamera::RotateX(double degrees) {
 
-	vec oldFront = (frustum.Front() * cos(degrees) + frustum.Up() * sin(degrees)).Normalized();
-	frustum.SetFront(oldFront);
+	vec newFront = (frustum.Front() * cos(degrees * DEGTORAD) + frustum.Up() * sin(degrees * DEGTORAD)).Normalized();
+	frustum.SetFront(newFront);
 
-	vec oldUp = frustum.WorldRight().Cross(oldFront);
-	frustum.SetUp(oldUp);
+	vec newUp = frustum.WorldRight().Cross(newFront);
+	frustum.SetUp(newUp);
 }
 
 void ModuleCamera::RotateY(double degrees) {

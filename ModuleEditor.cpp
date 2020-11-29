@@ -125,18 +125,28 @@ update_status ModuleEditor::Update()
         ImGui::SetNextWindowPos(pos);
         ImGui::Begin("Configuration", 0, ImGuiWindowFlags_NoMove);
 
-        ImGui::Text("Timer: %g seconds", (double)seconds);
-        //ImGui::Text("DeltaTime: %g seconds", App->camera->GetDelta());
+        if (ImGui::CollapsingHeader("Windows Module")) {
+            if (ImGui::Checkbox("Fullscreen", &fullscreen)) {
+                App->window->SetFlag(SDL_WINDOW_FULLSCREEN, fullscreen);
+            }
+            if (ImGui::Checkbox("Resizable Window", &resizable)) {
+                App->window->SetFlag(SDL_WINDOW_RESIZABLE, resizable);
+            }
+            if (ImGui::Checkbox("Borderless Window", &borderless)) {
+                App->window->SetFlag(SDL_WINDOW_RESIZABLE, borderless);
+            }
+        }
 
-        ImVec2 mousePos = ImGui::GetMousePos();
+        if (ImGui::CollapsingHeader("Input Module")) {
 
-        ImGui::Text("Mouse Position: %g %g", mousePos.x, mousePos.y);
+            ImVec2 mousePos = ImGui::GetMousePos();
+            ImGui::Text("Timer: %g seconds", (double)seconds);
 
-        //ImGui::Text("Performance Timer: %g miliseconds", (double)perfms);
+            ImGui::Text("Mouse Position: %g %g", mousePos.x, mousePos.y);
 
-        ImGui::Text("FPS Graph");
-
-        ImGui::PlotHistogram("<-144+", &fps_vec[0], fps_vec.size(), 0, "FPS", 0.0f, 144.0f, ImVec2(fW * 0.8f, 100));
+            ImGui::Text("FPS Graph");
+            ImGui::PlotHistogram("<-144+", &fps_vec[0], fps_vec.size(), 0, "FPS", 0.0f, 144.0f, ImVec2(fW * 0.8f, 100));
+        }
 
         if (ImGui::CollapsingHeader("System Information")) {
 

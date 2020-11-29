@@ -68,3 +68,19 @@ bool ModuleWindow::CleanUp()
 	return true;
 }
 
+void ModuleWindow::SetFlag(SDL_WindowFlags flag, bool active) {
+	switch (flag) {
+	case SDL_WINDOW_FULLSCREEN:
+		SDL_SetWindowFullscreen(window, active);
+		break;
+	case SDL_WINDOW_RESIZABLE:
+		SDL_SetWindowResizable(window, (SDL_bool)active);
+		break;
+	case SDL_WINDOW_BORDERLESS:
+		if (active) SDL_SetWindowBordered(window, SDL_FALSE);
+		else SDL_SetWindowBordered(window, SDL_TRUE);
+		break;
+	default:
+		break;
+	}
+}
