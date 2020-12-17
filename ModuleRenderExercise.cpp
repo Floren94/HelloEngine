@@ -22,7 +22,6 @@ void myCallback(const char* msg, char* userData) {
 	App->editor->AddLogToConsole(msg);
 }
 
-// Called before RenderExercise is available
 bool ModuleRenderExercise::Init()
 {
 	LOG("Creating Renderer context");
@@ -54,30 +53,9 @@ bool ModuleRenderExercise::Start() {
 	return true;
 }
 
-update_status ModuleRenderExercise::PreUpdate()
-{
-	int w = 0;
-	int h = 0;
-	SDL_GetWindowSize(App->window->window, &w, &h);
-	glViewport(0, 0, w, h);
-
-	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	return UPDATE_CONTINUE;
-}
-
 // Called every draw update
 update_status ModuleRenderExercise::Update()
 {
-	int w, h;
-
-	SDL_GetWindowSize(App->window->window, &w, &h);
-
-	App->debugdraw->Draw(App->camera->GetView() , App->camera->GetProjection(), w, h);
-
-	App->model->Draw();
 	return UPDATE_CONTINUE;
 }
 
@@ -86,6 +64,7 @@ update_status ModuleRenderExercise::PostUpdate()
 	App->editor->RenderUi();
 
 	SDL_GL_SwapWindow(App->window->window);
+
 	return UPDATE_CONTINUE;
 }
 
@@ -117,4 +96,54 @@ void ModuleRenderExercise::LoadDropModel(char* filename) {
 	else {
 		LOG("%s file not supported", s);
 	}
+}
+
+void ModuleRenderExercise::RenderToTexture() {
+
+	int w = 0;
+	int h = 0;
+	SDL_GetWindowSize(App->window->window, &w, &h);
+
+	//buffer to texture
+
+	GLuint FramebufferName = 0;
+	glGenFramebuffers(1, &FramebufferName);
+	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
+
+	glDeleteTextures(1, &renderedTexture);
+	glGenTextures(1, &renderedTexture);
+
+	// "Bind" the newly created texture : all future texture functions will modify this texture
+	glBindTexture(GL_TEXTURE_2D, renderedTexture);
+
+	// Give an empty image to OpenGL ( the last "0" )
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+
+	// Poor filtering. Needed !
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	// Set "renderedTexture" as our colour attachement #0
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderedTexture, 0);
+
+	glDeleteRenderbuffers(1, &depthrenderbuffer);
+	glGenRenderbuffers(1, &depthrenderbuffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, depthrenderbuffer);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, w, h);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depthrenderbuffer);
+
+	glViewport(0, 0, w, h);
+	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	App->debugdraw->Draw(App->camera->GetView(), App->camera->GetProjection(), w, h);
+
+	App->model->Draw();
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 }

@@ -13,14 +13,20 @@ public:
 	bool Start();
 	bool CleanUp();
 
-	update_status PreUpdate();
 	update_status Update();
 	update_status PostUpdate();
 
 	void* GetContext() const { return context; }
+	unsigned int GetRenderText() {
+		RenderToTexture();
+		return renderedTexture; }
 	void LoadDropModel(char* filename);
 
 private:
 	void* context;
+	unsigned int renderedTexture;
+	unsigned int depthrenderbuffer;
+
+	void RenderToTexture();
 
 };

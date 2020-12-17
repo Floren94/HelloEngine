@@ -73,8 +73,8 @@ update_status ModuleCamera::Update()
 	projectionGL = frustum.ProjectionMatrix();
 	viewMatrix = frustum.ViewMatrix();
 
+	//doubled speed
 	if (App->input->GetKey(SDL_SCANCODE_LSHIFT)) {
-		//double speed
 		speed *= 2.0f;
 		degree *= 2.0f;
 	}

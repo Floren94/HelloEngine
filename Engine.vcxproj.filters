@@ -142,9 +142,6 @@
     <ClCompile Include="ModuleInput.cpp">
       <Filter>CoreModules</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleRender.cpp">
-      <Filter>CoreModules</Filter>
-    </ClCompile>
     <ClCompile Include="ModuleWindow.cpp">
       <Filter>CoreModules</Filter>
     </ClCompile>
@@ -430,9 +427,6 @@
       <Filter>CoreModules</Filter>
     </ClInclude>
     <ClInclude Include="ModuleInput.h">
-      <Filter>CoreModules</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleRender.h">
       <Filter>CoreModules</Filter>
     </ClInclude>
     <ClInclude Include="ModuleWindow.h">

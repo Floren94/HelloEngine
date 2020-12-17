@@ -161,6 +161,22 @@ update_status ModuleEditor::Update()
 
         ImGui::End();
     }
+
+    fW = (float)w;
+    fW = fW / 5;
+
+    //viewport
+    ImVec2 pos0(fW, menuSize);
+    ImVec2 sizeView(fW * 3, size.y);
+
+    ImGui::SetNextWindowPos(pos0);
+    ImGui::Begin("Viewport", 0, ImGuiWindowFlags_NoMove);
+
+    ImGui::Image((ImTextureID)App->rendererExercise->GetRenderText(), { sizeView.x * 0.985f, sizeView.y * 0.95f}, { 0,1 }, { 1,0 });
+
+    ImGui::SetWindowSize(sizeView);
+    ImGui::End();
+
     //properties window
     if (properties) {
         fW = (float)w;
@@ -226,7 +242,6 @@ update_status ModuleEditor::Update()
 
         ImGui::End();
     }
-
 
     return UPDATE_CONTINUE;
 }
