@@ -1,7 +1,6 @@
 #pragma once
 #include "Application.h"
 #include "ModuleWindow.h"
-#include "ModuleRender.h"
 #include "ModuleInput.h"
 #include "ModuleCamera.h"
 #include "ModuleEditor.h"
@@ -10,6 +9,7 @@
 #include "ModuleTexture.h"
 #include "ModuleDebugDraw.h"
 #include "ModuleModel.h"
+#include "Brofiler/Brofiler.h"
 
 using namespace std;
 
@@ -51,7 +51,7 @@ bool Application::Init()
 update_status Application::Update()
 {
 	update_status ret = UPDATE_CONTINUE;
-
+	BROFILER_FRAME("Update")
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		ret = (*it)->PreUpdate();
 
@@ -60,7 +60,7 @@ update_status Application::Update()
 
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		ret = (*it)->PostUpdate();
-
+	BROFILER_CATEGORY("Update", Profiler::Color::Orchid)
 	return ret;
 }
 
